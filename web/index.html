@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="top">
+        <div class="brand">Notes</div>
+        <div id="status" class="status">disconnected</div>
+      </header>
+      <main class="stage">
+        <video id="remote" autoplay playsinline muted></video>
+        <div id="overlay" class="overlay">Connecting…</div>
+      </main>
+      <footer class="bar">
+        <label>
+          Token
+          <input id="token" type="password" autocomplete="off" />
+        </label>
+        <label>
+          Room
+          <input id="room" type="text" value="default" />
+        </label>
+        <button id="connect" type="button">Open</button>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
