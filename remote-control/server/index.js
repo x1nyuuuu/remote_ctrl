@@ -17,6 +17,7 @@ const { v4: uuidv4 } = require('uuid');
 const { encode, decode } = require('../shared/disguise');
 
 const PORT = process.env.PORT || 8443;
+const HOST = process.env.HOST || '0.0.0.0';
 const TOKEN = process.env.TOKEN || 'change-me-in-production';
 const SSL_CERT = process.env.SSL_CERT;
 const SSL_KEY = process.env.SSL_KEY;
@@ -165,8 +166,8 @@ server.on('upgrade', (req, socket, head) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`[S] Analytics gateway listening on :${PORT} (${USE_TLS ? 'TLS' : 'plain HTTP'})`);
+server.listen(PORT, HOST, () => {
+  console.log(`[S] Analytics gateway listening on ${HOST}:${PORT} (${USE_TLS ? 'TLS' : 'plain HTTP'})`);
   console.log(`[S] PC1 console: ${SCHEME}://localhost:${PORT}/console`);
   console.log(`[S] WS viewer:   ${WS_SCHEME}://localhost:${PORT}/api/v2/telemetry/stream?role=viewer&token=${TOKEN}`);
   console.log(`[S] WS agent:    ${WS_SCHEME}://localhost:${PORT}/api/v2/telemetry/collect?role=agent&token=${TOKEN}`);
