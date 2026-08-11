@@ -1,0 +1,11 @@
+# Caddy 自动 HTTPS 反向代理（推荐生产环境）
+#
+# 1. 安装 Caddy: https://caddyserver.com/docs/install
+# 2. 把 your-domain.com 换成你的域名，DNS 指向服务器
+# 3. 在本目录运行: caddy run
+#
+# Node 服务在本地 8443 明文运行即可，Caddy 对外提供 HTTPS/WSS
+
+your-domain.com {
+    reverse_proxy localhost:8443
+}

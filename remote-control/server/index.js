@@ -2,11 +2,14 @@
 /**
  * 服务器 S — WebSocket 中继 + PC1 Web 控制台静态资源
  *
- * 启动: TOKEN=your-secret node index.js
+ * 明文启动: TOKEN=your-secret node index.js
+ * TLS 启动: SSL_CERT=cert.pem SSL_KEY=key.pem TOKEN=your-secret node index.js
  * 默认端口 8443（可设 PORT 环境变量）
  */
 
+const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const path = require('path');
 const express = require('express');
 const { WebSocketServer } = require('ws');
@@ -15,7 +18,12 @@ const { encode, decode } = require('../shared/disguise');
 
 const PORT = process.env.PORT || 8443;
 const TOKEN = process.env.TOKEN || 'change-me-in-production';
+const SSL_CERT = process.env.SSL_CERT;
+const SSL_KEY = process.env.SSL_KEY;
 const PC1_WEB = path.join(__dirname, '../pc1-web');
+const USE_TLS = Boolean(SSL_CERT && SSL_KEY);
+const SCHEME = USE_TLS ? 'https' : 'http';
+const WS_SCHEME = USE_TLS ? 'wss' : 'ws';
 
 const app = express();
 
@@ -28,7 +36,12 @@ app.get('/api/health', (_req, res) => {
 app.use('/console', express.static(PC1_WEB));
 app.get('/', (_req, res) => res.redirect('/console'));
 
-const server = http.createServer(app);
+const server = USE_TLS
+  ? https.createServer(
+      { cert: fs.readFileSync(SSL_CERT), key: fs.readFileSync(SSL_KEY) },
+      app
+    )
+  : http.createServer(app);
 const wss = new WebSocketServer({ noServer: true });
 
 /** @type {Map<string, { viewer?: WebSocket, agent?: WebSocket }>} */
@@ -153,8 +166,11 @@ server.on('upgrade', (req, socket, head) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`[S] Analytics gateway listening on :${PORT}`);
-  console.log(`[S] PC1 console: http://localhost:${PORT}/console`);
-  console.log(`[S] WS viewer:   ws://localhost:${PORT}/api/v2/telemetry/stream?role=viewer&token=${TOKEN}`);
-  console.log(`[S] WS agent:    ws://localhost:${PORT}/api/v2/telemetry/collect?role=agent&token=${TOKEN}`);
+  console.log(`[S] Analytics gateway listening on :${PORT} (${USE_TLS ? 'TLS' : 'plain HTTP'})`);
+  console.log(`[S] PC1 console: ${SCHEME}://localhost:${PORT}/console`);
+  console.log(`[S] WS viewer:   ${WS_SCHEME}://localhost:${PORT}/api/v2/telemetry/stream?role=viewer&token=${TOKEN}`);
+  console.log(`[S] WS agent:    ${WS_SCHEME}://localhost:${PORT}/api/v2/telemetry/collect?role=agent&token=${TOKEN}`);
+  if (!USE_TLS) {
+    console.log('[S] WARNING: traffic is NOT encrypted. Set SSL_CERT + SSL_KEY or use Caddy/nginx.');
+  }
 });
