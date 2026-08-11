@@ -1,0 +1,27 @@
+[Unit]
+Description=Remote Control Relay Server (S)
+Documentation=file:/opt/remote-control/remote-control/deploy/PRODUCTION.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=remotecontrol
+Group=remotecontrol
+WorkingDirectory=/opt/remote-control/remote-control/server
+EnvironmentFile=/etc/remote-control/server.env
+ExecStart=/usr/bin/node index.js
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=remote-control-server
+
+# 安全加固
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/remote-control
+
+[Install]
+WantedBy=multi-user.target
