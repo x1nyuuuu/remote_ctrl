@@ -1,0 +1,7 @@
+# 无 Cloudflare — Caddy 自动 HTTPS
+# 安装到 /etc/caddy/Caddyfile
+# 修改域名为你的实际域名
+
+rc.yourdomain.com {
+    reverse_proxy 127.0.0.1:8443
+}

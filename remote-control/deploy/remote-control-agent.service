@@ -1,0 +1,18 @@
+[Unit]
+Description=Remote Control Agent (PC2)
+After=network-online.target graphical.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/remote-control/agent.env
+WorkingDirectory=/opt/remote-control/remote-control/pc2-agent
+ExecStart=/usr/bin/python3 agent.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=remote-control-agent
+
+[Install]
+WantedBy=multi-user.target

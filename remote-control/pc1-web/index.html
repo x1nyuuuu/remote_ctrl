@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corp Analytics Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Corp Analytics — Live Dashboard</h1>
+    <div class="status">
+      <span><span id="dot-server" class="status-dot off"></span>Gateway</span>
+      <span><span id="dot-agent" class="status-dot off"></span>Data Source</span>
+      <span id="fps-label">— FPS</span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <label>Gateway</label>
+    <input id="server-url" type="text" placeholder="ws://your-server:8443" />
+    <label>Token</label>
+    <input id="token" type="password" placeholder="access token" />
+    <button id="btn-connect">Connect</button>
+    <button id="btn-disconnect" disabled>Disconnect</button>
+  </div>
+
+  <p class="hint">操作：在画面内移动/点击鼠标，键盘输入会转发至远端。坐标按相对比例 (0–1) 传输。</p>
+
+  <main>
+    <div class="viewport-wrap">
+      <canvas id="screen" width="1280" height="720"></canvas>
+      <div id="overlay" class="overlay-msg">Connect to gateway to view live metrics stream</div>
+    </div>
+  </main>
+
+  <script src="disguise.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
